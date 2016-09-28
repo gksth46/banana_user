@@ -11,6 +11,7 @@ public class Main {
 		Controllers.getLoginController().requestLogout();
 		Controllers.getLoginController().requestLoginYN();
 
+		System.out.println("!!");
 	}
 
 }
