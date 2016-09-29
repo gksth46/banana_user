@@ -6,11 +6,9 @@ public class Main {
 		
 		new Controllers();
 
-<<<<<<< HEAD
-=======
 		Controllers.getMusicController().requestSelectAllMusic();
 		Controllers.getMenuController().requestShowMenu();
->>>>>>> refs/remotes/yuns111/master
+
 	}
 
 }
