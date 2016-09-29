@@ -3,6 +3,7 @@ package banana_user.dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -150,11 +151,17 @@ public class MusicDao {
 				}
 
 				//로그인상태의 유저의 플레이리스트로 들어감
-				String sql2 = "insert into playList values(?,?)";
-				pstmt = Controllers.getProgramController().getConnection().prepareStatement(sql2);
-				pstmt.setInt(1, selectedMusic.getMusicNumber());
-				pstmt.setInt(2, userNumber);
-				pstmt.executeUpdate();
+				try {
+					String sql2 = "insert into playList values(?,?)";
+					pstmt = Controllers.getProgramController().getConnection().prepareStatement(sql2);
+					pstmt.setInt(1, selectedMusic.getMusicNumber());
+					pstmt.setInt(2, userNumber);
+					pstmt.executeUpdate();
+					
+				} catch (SQLIntegrityConstraintViolationException e) {
+					System.out.println("플레이리스트에서 존재하는 곡을 재생합니다.");
+				}
+				
 
 
 			} catch (SQLException e) {
@@ -221,6 +228,83 @@ public class MusicDao {
 		}
 
 		return success;
+	}
+	
+	//감정별 음원 리스트
+	public ArrayList<Music> emotionMusicSelect(int emotionNumber) {
+
+		ArrayList<Music> emotionMusicList = new ArrayList<Music>();
+		Statement stmt = null;
+		ResultSet rs = null;
+
+		try {
+			stmt = Controllers.getProgramController().getConnection().createStatement();
+			String sql = "select musicNumber, title, singer from music where emotionNumber = " + emotionNumber;
+			rs = stmt.executeQuery(sql);
+
+			while(rs.next()) {
+				Music music = new Music();
+				music.setMusicNumber(rs.getInt("musicNumber"));
+				music.setTitle(rs.getString("title"));
+				music.setSinger(rs.getString("singer"));
+				emotionMusicList.add(music);
+			}
+		} catch (SQLException e){
+
+		} finally {
+
+			if(stmt != null) {
+				try { stmt.close(); } catch (SQLException e) { e.printStackTrace(); }
+			}
+			if(rs != null) {
+				try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
+			}	
+		}
+
+		return emotionMusicList;
+	}
+	
+
+	public ArrayList<Music> searchMusic(String title) {
+
+		ArrayList<Music> musics = new ArrayList<Music>();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		
+		try {
+
+			String sql = "select musicnumber, title, singer from music where title like '%'||?||'%' ";
+			pstmt = Controllers.getProgramController().getConnection().prepareStatement(sql);
+			pstmt.setString(1, title);
+			rs = pstmt.executeQuery();
+
+			while(rs.next()) {
+				Music music = new Music();
+				music.setMusicNumber(rs.getInt(1));
+				music.setTitle(rs.getString(2));
+				music.setSinger(rs.getString(3));
+				musics.add(music);
+			}
+
+		} catch (SQLException e) {
+
+			System.out.println("음원검색중 예외가 발생했습니다.");
+			e.printStackTrace();
+
+		} finally {
+
+			if(rs != null) {
+				try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
+			}
+			if(pstmt != null) {
+				try { pstmt.close(); } catch (SQLException e) { e.printStackTrace(); }
+			}
+
+		}
+
+		return musics;
+
 	}
 
 }

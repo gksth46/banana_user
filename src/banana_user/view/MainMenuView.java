@@ -21,6 +21,7 @@ public class MainMenuView {
 		int menuTypeNumber = 0;
 
 		while(true){
+			Controllers.getMusicController().requestSelectAllMusic();
 			if(loginYN == false){
 				System.out.print("\n[1.로그인   2.회원가입  3.노래듣기  4.노래검색  0.프로그램 종료] : ");
 				menuTypeNumber = keyboard.nextInt();
@@ -51,9 +52,10 @@ public class MainMenuView {
 				break;
 			case 4:
 				//노래 검색 구현 예정
+				Controllers.getMusicController().requestSearchMusic();
 				break;
 			case 5:
-				//감정 선택 구현 예정
+				Controllers.getEmotionController().requestCallSelectOneEmotionView();
 				break;
 			case 6:
 				if(loginYN == false){
@@ -66,7 +68,7 @@ public class MainMenuView {
 				if(loginYN == false){
 					System.out.println("메뉴를 다시 선택해 주세요.");
 				} else {						
-					//플레이리스트 구현 예정
+					Controllers.getPlayListController().goToPlayListView();
 				}
 				break;
 			case 0:
