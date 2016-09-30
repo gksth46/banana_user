@@ -6,7 +6,11 @@ public class Main {
 		
 		new Controllers();
 		Controllers.getMenuController().requestShowMenu();
+<<<<<<< HEAD
 
+=======
+		
+>>>>>>> refs/remotes/yuns111/master
 	}
 
 }
